@@ -8,6 +8,7 @@ from vosk import KaldiRecognizer, Model, SetLogLevel
 
 from pydiar.models import BinaryKeyDiarizationModel
 from pydiar.util.misc import optimize_segments
+from preprocessing import preprocess, convert_audio_to_spectogram
 
 
 # def format_time(time):
@@ -33,8 +34,26 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    '''
+        PREPROCESSING
+    '''
+    # display spectrogram before preprocessing
+    # comment below after first run as it takes a lot of processing power
+    convert_audio_to_spectogram(args.input)
+
+    # preprocess the input audio
+    preprocessed_file = preprocess(args.input)
+
+    # display spectrogram after preprocessing
+    # comment below after first run as it takes a lot of processing power
+    convert_audio_to_spectogram(preprocessed_file)
+
+    '''
+        TRANSCRIPTION
+    '''
     SAMPLE_RATE = 32000
-    audio = AudioSegment.from_wav(args.input)
+    # audio = AudioSegment.from_wav(args.input)
+    audio = AudioSegment.from_wav(preprocessed_file)
     audio = audio.set_frame_rate(SAMPLE_RATE)
     audio = audio.set_channels(1)
 
